@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Karolinska Institutet Danderyds Sjukhus{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background-color: #333;
+        }
+        nav a {
+            padding: 14px 20px;
+            display: block;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+        }
+        nav a:hover {
+            background-color: #575757;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Karolinska Institutet Danderyds Sjukhus</h1>
+</header>
+
+<nav>
+    <a href="{{ url_for('home') }}">Hem</a>
+    <a href="{{ url_for('register_club') }}">Registrera Journal Club</a>
+    <a href="{{ url_for('register_student') }}">Registrera ny doktorand</a>
+    <a href="{{ url_for('view_emails') }}">Se registrerade doktorander</a>
+</nav>
+
+<div class="container">
+    {% block content %}
+    <!-- Page-specific content will go here -->
+    {% endblock %}
+</div>
+
+<footer>
+    <p>© 2024 Journal Club Management System</p>
+</footer>
+
+</body>
+</html>

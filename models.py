@@ -14,8 +14,10 @@ class JournalClub(db.Model):
 
 class DoctoralStudent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    unit = db.Column(db.String(150), nullable=False)
+    ki_email = db.Column(db.String(120), unique=True, nullable=False)
 
     def __repr__(self):
-        return f'<DoctoralStudent {self.name}>'
+        return f'<DoctoralStudent {self.first_name} {self.last_name}>'

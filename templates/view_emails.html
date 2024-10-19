@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Visa doktorander{% endblock %}
+
+{% block content %}
+<h1>Registerade doktorander</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Förnamn</th>
+            <th>Efternamn</th>
+            <th>Enhet</th>
+            <th>KI Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.first_name }}</td>
+            <td>{{ student.last_name }}</td>
+            <td>{{ student.unit }}</td>
+            <td>{{ student.ki_email }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4">Inga studenter hittades.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

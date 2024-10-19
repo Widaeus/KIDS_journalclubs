@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Registrera ny journal club{% endblock %}
+
+{% block content %}
+<h1>Registrera journal club</h1>
+
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <label for="theme">{{ form.theme.label }}</label>
+    {{ form.theme(size=32) }}
+
+    <label for="date">{{ form.date.label }}</label>
+    {{ form.date() }}
+
+    <label for="time">{{ form.time.label }}</label>
+    {{ form.time() }}
+
+    <label for="place">{{ form.place.label }}</label>
+    {{ form.place(size=32) }}
+
+    <button type="submit">{{ form.submit.label }}</button>
+</form>
+{% endblock %}

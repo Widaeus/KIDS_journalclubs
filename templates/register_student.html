@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Registrera doktorand{% endblock %}
+
+{% block content %}
+<h1>Registrera ny doktorand</h1>
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.first_name.label }}<br>
+        {{ form.first_name(size=32) }}
+    </p>
+    <p>
+        {{ form.last_name.label }}<br>
+        {{ form.last_name(size=32) }}
+    </p>
+    <p>
+        {{ form.unit.label }}<br>
+        {{ form.unit(size=32) }}
+    </p>
+    <p>
+        {{ form.ki_email.label }}<br>
+        {{ form.ki_email(size=32) }}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}
