@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, TimeField, SubmitField
+from wtforms import StringField, DateField, TimeField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Email
 
 units = [
@@ -26,6 +26,6 @@ class RegisterJournalClubForm(FlaskForm):
 class RegisterStudentForm(FlaskForm):
     first_name = StringField('Förnamn', validators=[DataRequired()])
     last_name = StringField('Efternamn', validators=[DataRequired()])
-    unit = StringField('Enhet', choices=units, validators=[DataRequired()])
+    unit = SelectField('Enhet', choices=units, validators=[DataRequired()])
     ki_email = StringField('KI E-mail', validators=[DataRequired(), Email()])
     submit = SubmitField('Register Student')
