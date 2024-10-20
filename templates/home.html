@@ -12,26 +12,27 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth', // Show month view
-        events: '/api/journal_clubs', // Fetch events from Flask API route
-        eventTimeFormat: { // Format for time display
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        },
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+    
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '/api/journal_clubs',  // Fetch events from Flask API
+            eventTimeFormat: { // Format for time display
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            },
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            }
+        });
+    
+        calendar.render();
     });
-
-    calendar.render();
-});
+    
 </script>
 
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Alla e-postadresser för utskick{% endblock %}
+
+{% block content %}
+<h2>Alla e-postadresser för utskick</h2>
+
+<!-- Textarea to display all emails -->
+<textarea rows="5" style="width:100%;" readonly>{{ emails }}</textarea>
+<p>Kopiera e-postadresserna ovan för att använda i ett utskick.</p>
+
+{% endblock %}

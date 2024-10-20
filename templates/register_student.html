@@ -1,27 +1,54 @@
 {% extends "base.html" %}
 
-{% block title %}Registrera doktorand{% endblock %}
+{% block title %}
+Registrera ny doktorand
+{% endblock %}
 
 {% block content %}
-<h1>Registrera ny doktorand</h1>
-<form method="POST" action="">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.first_name.label }}<br>
-        {{ form.first_name(size=32) }}
-    </p>
-    <p>
-        {{ form.last_name.label }}<br>
-        {{ form.last_name(size=32) }}
-    </p>
-    <p>
-        {{ form.unit.label }}<br>
-        {{ form.unit() }}
-    </p>
-    <p>
-        {{ form.ki_email.label }}<br>
-        {{ form.ki_email(size=32) }}
-    </p>
-    <p>{{ form.submit() }}</p>
-</form>
+    <h2>Registrera ny doktorand</h2>
+    <form method="POST" action="{{ url_for('register_student') }}" style="display: flex; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            <!-- First Name -->
+            <label for="first_name">Förnamn:</label>
+            <input type="text" id="first_name" name="first_name" required style="margin-bottom: 10px;"><br>
+
+            <!-- Last Name -->
+            <label for="last_name">Efternamn:</label>
+            <input type="text" id="last_name" name="last_name" required style="margin-bottom: 10px;"><br>
+
+            <!-- Unit -->
+            <label for="unit">Enhet:</label>
+            <select id="unit" name="unit" required style="margin-bottom: 10px;">
+                <option value="Anestesi och Intensivvård">Anestesi och Intensivvård</option>
+                <option value="Hjärtmedicin">Hjärtmedicin</option>
+                <option value="Infektionssjukdomar">Infektionssjukdomar</option>
+                <option value="Kirurgi och urologi">Kirurgi och urologi</option>
+                <option value="Medicin">Medicin</option>
+                <option value="Medicinsk pedagogik">Medicinsk pedagogik</option>
+                <option value="Neurologi">Neurologi</option>
+                <option value="Njurmedicin">Njurmedicin</option>
+                <option value="Obstetrik och gynekologi">Obstetrik och gynekologi</option>
+                <option value="Ortopedi">Ortopedi</option>
+                <option value="Rehabiliteringsmedicin">Rehabiliteringsmedicin</option>
+            </select><br>
+
+            <!-- KI Email -->
+            <label for="ki_email">KI E-post:</label>
+            <input type="email" id="ki_email" name="ki_email" required style="margin-bottom: 10px;"><br>
+        </div>
+
+        <div style="flex: 1; min-width: 300px;">
+            <!-- Start Date -->
+            <label for="start_date">Startdatum för forskarstudier:</label>
+            <input type="date" id="start_date" name="start_date" required style="margin-bottom: 10px;"><br>
+
+            <!-- End Date -->
+            <label for="end_date">Slutdatum för forskarstudier:</label>
+            <input type="date" id="end_date" name="end_date" style="margin-bottom: 10px;"><br>
+        </div>
+
+        <div style="flex-basis: 100%; text-align: center;">
+            <input type="submit" value="Registrera">
+        </div>
+    </form>
 {% endblock %}

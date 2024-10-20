@@ -17,7 +17,8 @@ units = [
 ]
 
 class RegisterJournalClubForm(FlaskForm):
-    theme = StringField('Tema', validators=[DataRequired()])
+    description = StringField('Beskrivning', validators=[DataRequired()])
+    DOI = StringField('DOI nummer', validators=[DataRequired()])
     date = DateField('Datum', validators=[DataRequired()])
     time = TimeField('Tid', validators=[DataRequired()])
     place = StringField('Plats', validators=[DataRequired()])

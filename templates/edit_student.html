@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Ändra information{% endblock %}
+
+{% block content %}
+<h2>Ändra information</h2>
+<form method="POST" action="{{ url_for('edit_student', student_id=student.id) }}">
+    <label for="first_name">Förnamn:</label>
+    <input type="text" id="first_name" name="first_name" value="{{ student.first_name }}" required><br>
+
+    <label for="last_name">Efternamn:</label>
+    <input type="text" id="last_name" name="last_name" value="{{ student.last_name }}" required><br>
+
+    <label for="unit">Enhet:</label>
+    <input type="text" id="unit" name="unit" value="{{ student.unit }}" required><br>
+
+    <label for="ki_email">KI E-post:</label>
+    <input type="email" id="ki_email" name="ki_email" value="{{ student.ki_email }}" required><br>
+
+    <label for="start_date">Startdatum:</label>
+    <input type="date" id="start_date" name="start_date" value="{{ student.start_date }}" required><br>
+
+    <label for="end_date">Slutdatum:</label>
+    <input type="date" id="end_date" name="end_date" value="{{ student.end_date }}"><br>
+
+    <input type="submit" value="Uppdatera">
+</form>
+{% endblock %}
