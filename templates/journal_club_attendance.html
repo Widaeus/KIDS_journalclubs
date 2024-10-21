@@ -1,18 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Närvaro för {{ journal_club.description }}{% endblock %}
+{% block title %}Närvaro för {{ journal_club.DOI }}{% endblock %}
 
 {% block content %}
-<h1>Närvaro för {{ journal_club.description }}</h1>
+<h1>Närvaro för {{ journal_club.DOI }}</h1>
 
-{% if attendances %}
-    <ul>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Startdatum</th>
+            <th>Slutdatum</th>
+            <th>Actions</th> <!-- New column for actions -->
+        </tr>
+    </thead>
+    <tbody>
         {% for attendance in attendances %}
-        <li>{{ attendance.student.first_name }} {{ attendance.student.last_name }}</li>
+        <tr id="attendance-{{ attendance.id }}">
+            <td>{{ attendance.student.first_name }} {{ attendance.student.last_name }}</td>
+            <td>{{ attendance.student.start_date }}</td>
+            <td>{{ attendance.student.end_date }}</td>
+            <td>
+                <button class="btn btn-danger" onclick="deleteAttendance({{ attendance.id }})">Ta bort</button> <!-- Delete button -->
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
-{% else %}
-    <p>Inga studenter deltog i denna Journal Club.</p>
-{% endif %}
+    </tbody>
+</table>
 
+<!-- Add JavaScript -->
+<script>
+function deleteAttendance(attendanceId) {
+    if (confirm('Är du säker på att du vill ta bort denna närvaro?')) {
+        fetch(`/delete_attendance/${attendanceId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById(`attendance-${attendanceId}`).remove();  // Remove attendance row from the table
+                alert('Närvaro har tagits bort.');
+            } else {
+                alert('Det gick inte att ta bort närvaron.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ett fel uppstod vid borttagning.');
+        });
+    }
+}
+</script>
 {% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Alla Journal Clubs{% endblock %}
+
+{% block content %}
+<h1>Alla Journal Clubs</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Beskrivning</th>
+            <th>Datum</th>
+            <th>Tid</th>
+            <th>Plats</th>
+            <th>DOI</th>
+            <th>Actions</th>  <!-- Add a new column for actions -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for club in journal_clubs %}
+        <tr>
+            <td>{{ club.description }}</td>
+            <td>{{ club.date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ club.time }}</td>
+            <td>{{ club.place }}</td>
+            <td>{{ club.DOI }}</td>
+            <td>
+                <a href="{{ url_for('edit_journal_club', journal_club_id=club.id) }}" class="btn btn-warning">Ändra</a>
+
+                <button class="btn btn-danger" onclick="deleteJournalClub({{ club.id }})">Ta bort</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    function deleteJournalClub(journalClubId) {
+        if (confirm('Är du säker på att du vill ta bort denna Journal Club?')) {
+            fetch(`/delete_journal_club/${journalClubId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById(`journal-club-${journalClubId}`).remove();  // Remove journal club from the table
+                    alert('Journal Club har tagits bort.');
+                } else {
+                    alert('Det gick inte att ta bort Journal Club.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ett fel uppstod vid borttagning.');
+            });
+        }
+    }
+    </script>
+{% endblock %}

@@ -5,14 +5,54 @@
 {% block content %}
 <h1>Närvaro för {{ student.first_name }} {{ student.last_name }}</h1>
 
-{% if attendances %}
-    <ul>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Journal Club</th>
+            <th>Datum</th>
+            <th>Tid</th>
+            <th>Plats</th>
+            <th>Actions</th> <!-- New column for actions -->
+        </tr>
+    </thead>
+    <tbody>
         {% for attendance in attendances %}
-        <li>{{ attendance.journal_club.description }} - {{ attendance.journal_club.date.strftime('%Y-%m-%d') }}</li>
+        <tr id="attendance-{{ attendance.id }}">
+            <td>{{ attendance.journal_club.description }}</td>
+            <td>{{ attendance.journal_club.date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ attendance.journal_club.time }}</td>
+            <td>{{ attendance.journal_club.place }}</td>
+            <td>
+                <button class="btn btn-danger" onclick="deleteAttendance({{ attendance.id }})">Ta bort</button> <!-- Delete button -->
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
-{% else %}
-    <p>Inga närvarouppgifter hittades för denna student.</p>
-{% endif %}
+    </tbody>
+</table>
 
+<!-- Add JavaScript -->
+<script>
+function deleteAttendance(attendanceId) {
+    if (confirm('Är du säker på att du vill ta bort denna närvaro?')) {
+        fetch(`/delete_attendance/${attendanceId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById(`attendance-${attendanceId}`).remove();  // Remove attendance row from the table
+                alert('Närvaro har tagits bort.');
+            } else {
+                alert('Det gick inte att ta bort närvaron.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ett fel uppstod vid borttagning.');
+        });
+    }
+}
+</script>
 {% endblock %}

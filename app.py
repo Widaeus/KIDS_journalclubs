@@ -116,30 +116,17 @@ def register_student():
 @app.route('/edit_student/<int:student_id>', methods=['GET', 'POST'])
 def edit_student(student_id):
     student = DoctoralStudent.query.get_or_404(student_id)
+    allowed_units = [
+        'Anestesi och Intensivvård', 'Hjärtmedicin', 'Infektionssjukdomar',
+        'Kirurgi och urologi', 'Medicin', 'Medicinsk pedagogik', 'Neurologi',
+        'Njurmedicin', 'Obstetrik och gynekologi', 'Ortopedi', 'Rehabiliteringsmedicin'
+    ]
     if request.method == 'POST':
-        student.first_name = request.form['first_name']
-        student.last_name = request.form['last_name']
         student.unit = request.form['unit']
-        student.ki_email = request.form['ki_email']
-
-        # Convert the start_date and end_date strings to date objects
-        student.start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d').date()
-        student.end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d').date() if request.form['end_date'] else None
-
         db.session.commit()
-        flash('Doktorandens information har uppdaterats.')
+        flash('Studenten har uppdaterats.', 'success')
         return redirect(url_for('view_students'))
-    
-    return render_template('edit_student.html', student=student)
-
-
-@app.route('/delete_student/<int:student_id>', methods=['POST', 'GET'])
-def delete_student(student_id):
-    student = DoctoralStudent.query.get_or_404(student_id)
-    db.session.delete(student)
-    db.session.commit()
-    flash('Doktoranden har tagits bort.')
-    return redirect(url_for('view_students'))
+    return render_template('edit_student.html', student=student, allowed_units=allowed_units)
     
 @app.route('/register_attendance', methods=['GET', 'POST'])
 def register_attendance():
@@ -147,11 +134,16 @@ def register_attendance():
         journal_club_id = request.form.get('journal_club_id')
         student_ids = request.form.getlist('student_ids')  # List of selected students
 
-        # Add attendance for each student
         for student_id in student_ids:
-            attendance = Attendance(student_id=student_id, journal_club_id=journal_club_id)
-            db.session.add(attendance)
-        
+            # Check if this student is already registered for this journal club
+            existing_attendance = Attendance.query.filter_by(student_id=student_id, journal_club_id=journal_club_id).first()
+            
+            if not existing_attendance:
+                # Only add attendance if it's not a duplicate
+                attendance = Attendance(student_id=student_id, journal_club_id=journal_club_id)
+                db.session.add(attendance)
+
+        # Commit after processing all students
         db.session.commit()
         flash('Närvaro har registrerats.', 'success')
         return redirect(url_for('attendance'))
@@ -161,6 +153,29 @@ def register_attendance():
     students = DoctoralStudent.query.all()  # Ensure students are queried correctly
     
     return render_template('register_attendance.html', journal_clubs=journal_clubs, students=students)
+
+@app.route('/edit_attendance/<int:attendance_id>', methods=['GET', 'POST'])
+def edit_attendance(attendance_id):
+    attendance = Attendance.query.get_or_404(attendance_id)
+    journal_clubs = JournalClub.query.all()
+    students = DoctoralStudent.query.all()
+
+    if request.method == 'POST':
+        student_id = request.form['student_id']
+        journal_club_id = request.form['journal_club_id']
+
+        # Check for duplicates before saving
+        existing_attendance = Attendance.query.filter_by(student_id=student_id, journal_club_id=journal_club_id).first()
+        if existing_attendance and existing_attendance.id != attendance_id:
+            flash('Studenten är redan registrerad för denna Journal Club.', 'error')
+        else:
+            attendance.journal_club_id = journal_club_id
+            attendance.student_id = student_id
+            db.session.commit()
+            flash('Närvaro har uppdaterats.', 'success')
+            return redirect(url_for('view_attendance'))
+
+    return render_template('edit_attendance.html', attendance=attendance, journal_clubs=journal_clubs, students=students)
 
 @app.route('/student_attendance/<int:student_id>')
 def student_attendance(student_id):
@@ -175,6 +190,88 @@ def journal_club_attendance(journal_club_id):
     attendances = Attendance.query.filter_by(journal_club_id=journal_club_id).all()
 
     return render_template('journal_club_attendance.html', journal_club=journal_club, attendances=attendances)
+
+@app.route('/view_journal_clubs')
+def view_journal_clubs():
+    journal_clubs = JournalClub.query.all()
+    return render_template('view_journal_clubs.html', journal_clubs=journal_clubs)
+
+from datetime import datetime, time
+
+@app.route('/edit_journal_club/<int:journal_club_id>', methods=['GET', 'POST'])
+def edit_journal_club(journal_club_id):
+    journal_club = JournalClub.query.get_or_404(journal_club_id)
+    if request.method == 'POST':
+        # Update all fields from the form
+        journal_club.description = request.form['description']
+        journal_club.place = request.form['place']
+        journal_club.DOI = request.form['DOI']
+
+        # Convert the date from string to a datetime.date object
+        date_string = request.form['date']
+        journal_club.date = datetime.strptime(date_string, '%Y-%m-%d').date()
+
+        # Convert the time from string to a datetime.time object
+        time_string = request.form['time']
+        journal_club.time = datetime.strptime(time_string, '%H:%M').time()
+
+        # Commit the changes
+        db.session.commit()
+        flash('Journal Club har uppdaterats.', 'success')
+        return redirect(url_for('view_journal_clubs'))
+    
+    return render_template('edit_journal_club.html', journal_club=journal_club)
+
+@app.route('/delete_journal_club/<int:journal_club_id>', methods=['POST'])
+def delete_journal_club(journal_club_id):
+    journal_club = JournalClub.query.get_or_404(journal_club_id)
+
+    try:
+        # Deleting attendance records before deleting the journal club
+        attendances = Attendance.query.filter_by(journal_club_id=journal_club_id).all()
+        for attendance in attendances:
+            db.session.delete(attendance)
+
+        # Now delete the journal club
+        db.session.delete(journal_club)
+        db.session.commit()
+        flash('Journal Club har tagits bort.', 'success')
+        return '', 200  # Return success
+    except Exception as e:
+        db.session.rollback()
+        flash('Det gick inte att ta bort Journal Club.', 'error')
+        return str(e), 400  # Return error if deletion fails
+
+@app.route('/delete_student/<int:student_id>', methods=['POST'])
+def delete_student(student_id):
+    student = DoctoralStudent.query.get_or_404(student_id)
+    
+    try:
+        # Deleting attendance records before deleting the student
+        attendances = Attendance.query.filter_by(student_id=student_id).all()
+        for attendance in attendances:
+            db.session.delete(attendance)
+
+        # Now delete the student
+        db.session.delete(student)
+        db.session.commit()
+        flash('Studenten har tagits bort.', 'success')
+        return '', 200  # Return success
+    except Exception as e:
+        db.session.rollback()
+        flash('Det gick inte att ta bort studenten.', 'error')
+        return str(e), 400  # Return error if deletion fails
+
+@app.route('/delete_attendance/<int:attendance_id>', methods=['POST'])
+def delete_attendance(attendance_id):
+    attendance = Attendance.query.get_or_404(attendance_id)
+    try:
+        db.session.delete(attendance)
+        db.session.commit()
+        return '', 200  # Return success
+    except Exception as e:
+        db.session.rollback()
+        return str(e), 400  # Return error if deletion fails
 
 if __name__ == '__main__':
     app.run(debug=True)

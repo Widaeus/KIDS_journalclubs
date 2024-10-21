@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy import UniqueConstraint
 
 db = SQLAlchemy()
 
@@ -31,6 +32,10 @@ class Attendance(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('doctoral_student.id'), nullable=False)
     journal_club_id = db.Column(db.Integer, db.ForeignKey('journal_club.id'), nullable=False)
     attended_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    
+
+    # Define relationships to Student and Journal Club
     student = db.relationship('DoctoralStudent', backref='attendances')
     journal_club = db.relationship('JournalClub', backref='attendances')
+
+    # Add a unique constraint to ensure no duplicates of student_id and journal_club_id
+    __table_args__ = (UniqueConstraint('student_id', 'journal_club_id', name='unique_attendance'),)

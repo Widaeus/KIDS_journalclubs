@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Alla Journal Clubs{% endblock %}
+
+{% block content %}
+<h1>Redigera Journal Club</h1>
+<form method="POST">
+    <label for="description">Beskrivning:</label>
+    <input type="text" name="description" id="description" class="form-control" value="{{ journal_club.description }}">
+
+    <label for="date">Datum:</label>
+    <input type="date" name="date" id="date" class="form-control" value="{{ journal_club.date.strftime('%Y-%m-%d') }}">
+    
+    <label for="DOI">DOI:</label>
+    <input type="text" name="DOI" id="DOI" class="form-control" value="{{ journal_club.DOI }}">
+    
+    <label for="time">Tid:</label>
+    <input type="time" name="time" id="time" class="form-control" value="{{ journal_club.time.strftime('%H:%M') }}">
+    
+    <label for="place">Plats:</label>
+    <input type="text" name="place" id="place" class="form-control" value="{{ journal_club.place }}">
+    
+    <button type="submit" class="btn btn-success">Spara ändringar</button>
+</form>
+{% endblock %}

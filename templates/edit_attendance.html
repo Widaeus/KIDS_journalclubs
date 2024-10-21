@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Redigera Närvaro{% endblock %}
+
+{% block content %}
+<h1>Redigera Närvaro</h1>
+<form method="POST">
+    <label for="student_id">Välj student:</label>
+    <select name="student_id" id="student_id" class="form-control">
+        {% for student in students %}
+        <option value="{{ student.id }}" {% if student.id == attendance.student_id %}selected{% endif %}>
+            {{ student.first_name }} {{ student.last_name }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="journal_club_id">Välj Journal Club:</label>
+    <select name="journal_club_id" id="journal_club_id" class="form-control">
+        {% for club in journal_clubs %}
+        <option value="{{ club.id }}" {% if club.id == attendance.journal_club_id %}selected{% endif %}>
+            {{ club.description }} ({{ club.date }})
+        </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="btn btn-primary">Spara ändringar</button>
+</form>
+{% endblock %}
