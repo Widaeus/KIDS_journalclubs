@@ -3,10 +3,18 @@ from models import db, JournalClub, DoctoralStudent, Attendance
 from forms import RegisterJournalClubForm
 from config import Config
 from datetime import datetime, timedelta
+import os
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.config.from_object(Config)
-db.init_app(app)
+
+# Use the DATABASE_URL environment variable for PostgreSQL
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://kids_journalclub_user:q2pggdFOOaTxWkFpB8lUtlWrvXPopjJB@dpg-csb35el6l47c73f6s2cg-a/kids_journalclub')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 @app.route('/')
 def home():
