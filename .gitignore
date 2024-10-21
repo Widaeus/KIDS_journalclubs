@@ -1,8 +1,13 @@
-/.venv
-/__pycache__
+# Ignore the database itself
+*.db
 
-# Ignore instance
-/instance
+# Ignore compiled Python files
+*.pyc
+__pycache__/
 
-# Ignore venv
-/KIDS
+# Don't ignore the migrations folder
+# Ignore other environment or IDE-specific files
+.env
+.idea/
+.vscode/
+KIDS/
