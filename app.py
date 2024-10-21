@@ -10,7 +10,7 @@ from flask_migrate import Migrate
 app = Flask(__name__)
 
 # Use the DATABASE_URL environment variable for PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://kids_journalclub_user:q2pggdFOOaTxWkFpB8lUtlWrvXPopjJB@dpg-csb35el6l47c73f6s2cg-a/kids_journalclub')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://kids_journalclub_x7v0_user:Mxj1Jl1YECnjyIltWQpLvIIfdt59o0VC@dpg-csb3ms2j1k6c73d0tvu0-a/kids_journalclub_x7v0')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
