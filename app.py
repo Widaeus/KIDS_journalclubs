@@ -9,8 +9,11 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 
+# Set the SECRET_KEY for CSRF protection
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'b_5#y2L"F4Q8z\n\xec]/')
+
 # Use the DATABASE_URL environment variable for PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://kids_journalclub_x7v0_user:Mxj1Jl1YECnjyIltWQpLvIIfdt59o0VC@dpg-csb3ms2j1k6c73d0tvu0-a/kids_journalclub_x7v0')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://kids_journalclub_x7v0_user:Mxj1Jl1YECnjyIltWQpLvIIfdt59o0VC@dpg-csb3ms2j1k6c73d0tvu0-a.frankfurt-postgres.render.com/kids_journalclub_x7v0')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
