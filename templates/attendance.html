@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Närvaro{% endblock %}
+
+{% block content %}
+<h1>Närvaro</h1>
+
+<!-- Container for side-by-side sections -->
+<div class="attendance-container">
+    <!-- Section 1: Register Attendance -->
+    <div class="register-attendance">
+        <h2>Registrera Närvaro</h2>
+        <form method="POST">
+            <!-- Searchable Radio Buttons for Journal Clubs -->
+            <label for="journal_club">Sök Journal Club:</label>
+            <input type="text" id="journal_club_search_register" onkeyup="searchJournalClubs('journal_club_search_register', 'journal_club_list_register')" placeholder="Sök Journal Club">
+            <div id="journal_club_list_register">
+                {% for club in journal_clubs %}
+                <div class="club-radio">
+                    <input type="radio" id="club_{{ club.id }}" name="journal_club_id" value="{{ club.id }}">
+                    <label for="club_{{ club.id }}">{{ club.description }} ({{ club.date.strftime('%Y-%m-%d') }})</label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Searchable Checkboxes for Students -->
+            <label for="students">Sök Studenter:</label>
+            <input type="text" id="student_search_register" onkeyup="searchStudents('student_search_register', 'students_register')" placeholder="Sök Student">
+            <div id="students_register">
+                {% for student in students %}
+                <div class="student-checkbox">
+                    <input type="checkbox" name="student_ids" value="{{ student.id }}">
+                    <label>{{ student.first_name }} {{ student.last_name }}</label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit">Registrera Närvaro</button>
+        </form>
+    </div>
+
+    <!-- Section 2: View Attendance -->
+    <div class="view-attendance">
+        <h2>Visa Närvaro</h2>
+    
+        <!-- Searchable List for Journal Clubs -->
+        <label for="journal_club_search_view">Sök Journal Club:</label>
+        <input type="text" id="journal_club_search_view" onkeyup="searchVisaList('journal_club_search_view', 'journal_club_list_view')" placeholder="Sök Journal Club">
+        <ul id="journal_club_list_view">
+            {% for club in journal_clubs %}
+            <li>
+                <a href="{{ url_for('journal_club_attendance', journal_club_id=club.id) }}">
+                    Visa närvaro för {{ club.description }} ({{ club.date.strftime('%Y-%m-%d') }})
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    
+        <!-- Searchable List for Students -->
+        <label for="student_search_view">Sök Studenter:</label>
+        <input type="text" id="student_search_view" onkeyup="searchVisaList('student_search_view', 'student_list_view')" placeholder="Sök Student">
+        <ul id="student_list_view">
+            {% for student in students %}
+            <li>
+                <a href="{{ url_for('student_attendance', student_id=student.id) }}">
+                    Visa närvaro för {{ student.first_name }} {{ student.last_name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

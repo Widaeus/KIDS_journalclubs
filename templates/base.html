@@ -13,11 +13,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/css_ZmGOm3d4QTE82hZBIszq2W7Y6LQ5_y5GrXyR2uvtO7Q.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/css_iUuguAP80CiwkXq9BwE9kFkcDIMZF_ufL0e_zVLoviE.css') }}">
 
-    <!-- FullCalendar CSS -->
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
-    <!-- FullCalendar JavaScript -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
-
     <style>
         body {
             font-family: 'Source Sans Pro', sans-serif;
@@ -120,7 +115,77 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+        .attendance-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+    
+        .register-attendance, .view-attendance {
+            width: 45%;  /* Adjust width as needed */
+        }
+    
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+    
+        .student-checkbox, .club-radio {
+            margin-bottom: 5px;
+        }
     </style>
+    <script>
+        function searchJournalClubs(searchInputId, listId) {
+            var input, filter, div, labels, i, txtValue;
+            input = document.getElementById(searchInputId);
+            filter = input.value.toUpperCase();
+            div = document.getElementById(listId);
+            labels = div.getElementsByTagName('label');
+            for (i = 0; i < labels.length; i++) {
+                txtValue = labels[i].textContent || labels[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    labels[i].parentElement.style.display = "";
+                } else {
+                    labels[i].parentElement.style.display = "none";
+                }
+            }
+        }
+    
+        function searchStudents(searchInputId, containerId) {
+            var input, filter, div, labels, i, txtValue;
+            input = document.getElementById(searchInputId);
+            filter = input.value.toUpperCase();
+            div = document.getElementById(containerId);
+            labels = div.getElementsByTagName('label');
+            for (i = 0; i < labels.length; i++) {
+                txtValue = labels[i].textContent || labels[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    labels[i].parentElement.style.display = "";
+                } else {
+                    labels[i].parentElement.style.display = "none";
+                }
+            }
+        }
+            // Function to search through the list of journal clubs or students (for 'Visa Närvaro')
+        function searchVisaList(searchInputId, listId) {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById(searchInputId);
+            filter = input.value.toUpperCase();
+            ul = document.getElementById(listId);  // The list container (ul)
+            li = ul.getElementsByTagName('li');    // All list items (li)
+
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];  // The anchor (a) inside each list item
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";  // Show the item if it matches
+                } else {
+                    li[i].style.display = "none";  // Hide the item if it doesn't match
+                }
+            }
+        }
+    </script>    
 </head>
 <body>
 
@@ -135,7 +200,7 @@
     <a href="{{ url_for('register_club') }}">Registrera ny Journal Club</a>
     <a href="{{ url_for('view_students') }}">Visa doktorander</a>
     <a href="{{ url_for('view_all_emails') }}">Visa alla mail för utskick</a>
-    <a href="{{ url_for('attendance_home') }}">Närvaro</a>
+    <a href="{{ url_for('attendance') }}">Närvaro</a>
 </nav>
 
 <div class="container">
@@ -148,9 +213,7 @@
         </ul>
       {% endif %}
     {% endwith %}
-
     {% block content %}
-    <!-- Page-specific content will go here -->
     {% endblock %}
 </div>
 

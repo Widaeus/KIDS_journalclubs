@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Närvaro för {{ journal_club.description }}{% endblock %}
+
+{% block content %}
+<h1>Närvaro för {{ journal_club.description }}</h1>
+
+{% if attendances %}
+    <ul>
+        {% for attendance in attendances %}
+        <li>{{ attendance.student.first_name }} {{ attendance.student.last_name }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Inga studenter deltog i denna Journal Club.</p>
+{% endif %}
+
+{% endblock %}

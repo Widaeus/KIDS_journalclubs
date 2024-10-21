@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Närvaro för {{ student.first_name }} {{ student.last_name }}{% endblock %}
+
+{% block content %}
+<h1>Närvaro för {{ student.first_name }} {{ student.last_name }}</h1>
+
+{% if attendances %}
+    <ul>
+        {% for attendance in attendances %}
+        <li>{{ attendance.journal_club.description }} - {{ attendance.journal_club.date.strftime('%Y-%m-%d') }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Inga närvarouppgifter hittades för denna student.</p>
+{% endif %}
+
+{% endblock %}
