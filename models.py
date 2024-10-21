@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -25,3 +25,12 @@ class DoctoralStudent(db.Model):
 
     def __repr__(self):
         return f'<DoctoralStudent {self.first_name} {self.last_name}>'
+    
+class Attendance(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('doctoral_student.id'), nullable=False)
+    journal_club_id = db.Column(db.Integer, db.ForeignKey('journal_club.id'), nullable=False)
+    attended_on = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+    student = db.relationship('DoctoralStudent', backref='attendances')
+    journal_club = db.relationship('JournalClub', backref='attendances')

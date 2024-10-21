@@ -3,36 +3,33 @@
 {% block title %}Hem{% endblock %}
 
 {% block content %}
-<h1>Välkommen till Journal Club-kalendern!</h1>
-<p>Var god använd navigeringen ovan för att registrera ny journal club, doktorand eller visa registrerade doktorander att göra utskick till</p>
+<h1>Kommande Journal Clubs:</h1>
 
-<!-- Calendar Container -->
-<div id="calendar-container" style="display: flex; justify-content: center; margin-top: 20px;">
-    <div id="calendar" style="width: 50%;"></div> <!-- Calendar set to 50% width -->
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-    
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: '/api/journal_clubs',  // Fetch events from Flask API
-            eventTimeFormat: { // Format for time display
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            },
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            }
-        });
-    
-        calendar.render();
-    });
-    
-</script>
+{% if journal_clubs %}
+    <table>
+        <thead>
+            <tr>
+                <th>Beskrivning</th>
+                <th>Datum</th>
+                <th>Tid</th>
+                <th>Plats</th>
+                <th>DOI</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for club in journal_clubs %}
+            <tr>
+                <td>{{ club.description }}</td>
+                <td>{{ club.date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ club.time.strftime('%H:%M') }}</td>
+                <td>{{ club.place }}</td>
+                <td><a href="https://doi.org/{{ club.DOI }}" target="_blank">{{ club.DOI }}</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Inga Journal Clubs har registrerats de senaste 7 dagarna eller i framtiden.</p>
+{% endif %}
 
 {% endblock %}

@@ -1,8 +1,8 @@
 from flask import Flask, render_template, redirect, url_for, flash, jsonify, request
-from models import db, JournalClub, DoctoralStudent
+from models import db, JournalClub, DoctoralStudent, Attendance
 from forms import RegisterJournalClubForm, RegisterStudentForm
 from config import Config
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -10,7 +10,15 @@ db.init_app(app)
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    # Get the current date and calculate the date 7 days ago
+    today = datetime.today().date()
+    seven_days_ago = today - timedelta(days=7)
+
+    # Query for journal clubs within the last 7 days and in the future
+    journal_clubs = JournalClub.query.filter(JournalClub.date >= seven_days_ago).order_by(JournalClub.date.asc()).all()
+
+    # Render the template and pass the filtered journal clubs
+    return render_template('home.html', journal_clubs=journal_clubs)
 
 @app.route('/view_all_emails')
 def view_all_emails():
@@ -110,16 +118,50 @@ def delete_student(student_id):
 if __name__ == '__main__':
     app.run(debug=True)
 
-@app.route('/api/journal_clubs')
-def get_journal_clubs():
-    journal_clubs = JournalClub.query.all()  # Fetch all journal clubs from the database
-    events = []
-    for club in journal_clubs:
-        events.append({
-            'title': club.description,  # Assuming 'description' is the title
-            'start': club.date.isoformat(),  # The 'date' field
-            'time': club.time.strftime('%H:%M:%S'),  # The 'time' field
-            'place': club.place,  # The 'place' field
-            'DOI': club.DOI  # The 'DOI' field, if needed
-        })
-    return jsonify(events)
+@app.route('/attendance', methods=['GET', 'POST'])
+def register_attendance():
+    if request.method == 'POST':
+        journal_club_id = request.form.get('journal_club_id')
+        student_ids = request.form.getlist('student_ids')  # List of selected students
+
+        # Add attendance for each student
+        for student_id in student_ids:
+            attendance = Attendance(student_id=student_id, journal_club_id=journal_club_id)
+            db.session.add(attendance)
+        
+        db.session.commit()
+        flash('Närvaro registrerad.', 'success')
+        return redirect(url_for('attendance_home'))
+
+    # Get all journal clubs and students
+    journal_clubs = JournalClub.query.all()
+    students = DoctoralStudent.query.all()
+    
+    return render_template('register_attendance.html', journal_clubs=journal_clubs, students=students)
+
+@app.route('/student_attendance/<int:student_id>')
+def student_attendance(student_id):
+    student = DoctoralStudent.query.get_or_404(student_id)
+    attendances = Attendance.query.filter_by(student_id=student_id).all()
+    
+    return render_template('student_attendance.html', student=student, attendances=attendances)
+
+@app.route('/journal_club_attendance/<int:journal_club_id>')
+def journal_club_attendance(journal_club_id):
+    journal_club = JournalClub.query.get_or_404(journal_club_id)
+    attendances = Attendance.query.filter_by(journal_club_id=journal_club_id).all()
+    
+    return render_template('journal_club_attendance.html', journal_club=journal_club, attendances=attendances)
+
+@app.route('/attendance_home', methods=['GET', 'POST'])
+def attendance_home():
+    query = request.form.get('query', '').strip()
+    students = []
+    journal_clubs = []
+    
+    if query:
+        students = DoctoralStudent.query.filter(DoctoralStudent.first_name.ilike(f'%{query}%')).all()
+        journal_clubs = JournalClub.query.filter(JournalClub.description.ilike(f'%{query}%')).all()
+
+    # Pass empty lists or data if no query
+    return render_template('attendance_home.html', students=students, journal_clubs=journal_clubs)
