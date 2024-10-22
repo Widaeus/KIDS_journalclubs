@@ -15,7 +15,9 @@ if not app.config['SECRET_KEY']:
     raise RuntimeError("SECRET_KEY is not set in the environment variables")
 
 # Use the DATABASE_URL environment variable for PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://kids_journalclub_x7v0_user:Mxj1Jl1YECnjyIltWQpLvIIfdt59o0VC@dpg-csb3ms2j1k6c73d0tvu0-a.frankfurt-postgres.render.com/kids_journalclub_x7v0')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+if not app.config['SQLALCHEMY_DATABASE_URI']:
+    raise RuntimeError("SQLALCHEMY_DATABASE_URI is not set in the environment variables")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
